@@ -49,7 +49,7 @@ jobs:
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
-      # Buoc 3: Deploy len PROD workspace
+      
       - name: Deploy to PROD
         env:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_PROD }}
