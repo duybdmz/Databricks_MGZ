@@ -4,8 +4,8 @@ name: Deploy Databricks Bundle
 on:
   push:
     branches:
-      - dev          
-      - main         
+      - dev
+      - main
 
 
 jobs:
@@ -13,46 +13,41 @@ jobs:
 
   deploy-dev:
     name: "Deploy to DEV"
-    if: github.ref == 'refs/heads/dev'       # Chi chay khi push len branch dev
+    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     steps:
 
-      # Buoc 1: Lay code tu Git
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Buoc 2: Cai Databricks CLI
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
-      # Buoc 3: Deploy len DEV workspace
-      # Token duoc luu trong GitHub Secrets (Settings > Secrets and variables > Actions)
       - name: Deploy to DEV
         env:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_DEV }}
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DEV }}
         run: |
+          cd DAB
           databricks bundle deploy -t dev
 
   # === DEPLOY PROD ===
   deploy-prod:
     name: "Deploy to PROD"
-    if: github.ref == 'refs/heads/main'      # Chi chay khi merge vao main
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
 
-      # Buoc 1: Lay code tu Git
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Buoc 2: Cai Databricks CLI
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
-      # Buoc 3: Deploy len PROD workspace
       - name: Deploy to PROD
         env:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_PROD }}
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }}
         run: |
+          cd DAB
           databricks bundle deploy -t prod

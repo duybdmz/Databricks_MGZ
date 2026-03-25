@@ -1,4 +1,3 @@
-# Test fixtures directory
 
 Add JSON or CSV files here. In tests, use them with `load_fixture()`:
 
