@@ -19,7 +19,7 @@ awsAccessKey = os.environ.get("AWS_ACCESS_KEY")
 awsSecretKey = os.environ.get("AWS_SECRET_KEY")
 
 
-# Đọc từ Kinesis stream
+
 @dlt.table(
     name="retail_rocket.bronze.ingest_events",
     comment="đây là phần ingest từ kinesis",
