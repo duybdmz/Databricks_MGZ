@@ -15,7 +15,7 @@ events_schema = StructType([
     name="retail_rocket.silver.transform_events",
     comment="Lớp Silver: Dữ liệu sự kiện thời gian thực đã bóc tách JSON, làm sạch và xóa trùng lặp."
 )
-# Cổng chất lượng dữ liệu (Expectations): Tự động loại bỏ dữ liệu rác
+
 @dlt.expect_or_drop("valid_visitor_and_item", "visitorid IS NOT NULL AND itemid IS NOT NULL")
 @dlt.expect_or_drop("valid_event_type", "event IN ('view', 'addtocart', 'transaction')")
 def silver_events():

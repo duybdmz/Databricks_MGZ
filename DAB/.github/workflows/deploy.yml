@@ -4,13 +4,13 @@ name: Deploy Databricks Bundle
 on:
   push:
     branches:
-      - dev          # Push len branch dev --> deploy DEV
-      - main         # Merge vao main --> deploy PROD
+      - dev          
+      - main         
 
-# ---- VIEC CAN LAM ----
+
 jobs:
 
-  # === DEPLOY DEV ===
+
   deploy-dev:
     name: "Deploy to DEV"
     if: github.ref == 'refs/heads/dev'       # Chi chay khi push len branch dev
