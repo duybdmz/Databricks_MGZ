@@ -4,7 +4,7 @@ bundle:
   uuid: 1c21305c-b2a5-42d9-8637-d2d30c703e5a
 
 include:
-  - config/ETL/*.yml 
+  - config/ETL/*.yml
   - config/job/*.yml
 
 variables:
@@ -18,9 +18,9 @@ targets:
     mode: development
     default: true                    
     workspace:
-      host: https://dbc-e58a0f49-fb51.cloud.databricks.com/
+      host: https://dbc-e58a0f49-fb51.cloud.databricks.com
     variables:
-      catalog: retail_rocket        
+      catalog: dev_retail_rocket        
 
   prod:
     mode: production

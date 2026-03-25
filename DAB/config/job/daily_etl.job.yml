@@ -7,11 +7,12 @@ resources:
         timezone_id: "Asia/Seoul"
 
       tasks:
-
+        # Task 1: Chạy Batch Layer trước
         - task_key: run_batch_layer
           pipeline_task:
             pipeline_id: ${resources.pipelines.batch_layer_pipeline.id}
 
+        # Task 2: Batch xong → chạy Service Layer
         - task_key: run_service_layer
           depends_on:
             - task_key: run_batch_layer
