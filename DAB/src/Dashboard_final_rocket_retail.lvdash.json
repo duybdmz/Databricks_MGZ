@@ -1,0 +1,280 @@
+{
+  "datasets": [
+    {
+      "name": "ec51d10c",
+      "displayName": "Top Trending Retail Products Leaderboard Snapshot",
+      "queryLines": [
+        "select * from retail_rocket.serving.trending_products_leaderboard \r\n",
+        "\r\n"
+      ],
+      "catalog": "retail_rocket",
+      "schema": "serving"
+    },
+    {
+      "name": "d9f83421",
+      "displayName": "Untitled Dataset Generated from SQL Query",
+      "queryLines": [
+        "select * from retail_rocket.serving.user_activity_aggregates"
+      ]
+    },
+    {
+      "name": "d4d628ed",
+      "displayName": "retail rocket sales funnel analytics summary",
+      "queryLines": [
+        "select * from retail_rocket.serving.sales_funnel_summary"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "8a0fafbf",
+      "displayName": "Untitled page",
+      "layout": [
+        {
+          "widget": {
+            "name": "25a9f955",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d4d628ed",
+                  "fields": [
+                    {
+                      "name": "sum(unique_items)",
+                      "expression": "SUM(`unique_items`)"
+                    },
+                    {
+                      "name": "event",
+                      "expression": "`event`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "E-commerce Conversion Funnel",
+                "showTitle": true
+              },
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "sum(unique_items)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "event",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 10
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "0796af45",
+      "displayName": "Global Filters",
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "b8de0574",
+      "displayName": "Untitled page 1",
+      "layout": [
+        {
+          "widget": {
+            "name": "a48a78dd",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ec51d10c",
+                  "fields": [
+                    {
+                      "name": "categoryid",
+                      "expression": "`categoryid`"
+                    },
+                    {
+                      "name": "itemid",
+                      "expression": "`itemid`"
+                    },
+                    {
+                      "name": "event",
+                      "expression": "`event`"
+                    },
+                    {
+                      "name": "interaction_count",
+                      "expression": "`interaction_count`"
+                    },
+                    {
+                      "name": "unique_visitors",
+                      "expression": "`unique_visitors`"
+                    },
+                    {
+                      "name": "first_interaction",
+                      "expression": "`first_interaction`"
+                    },
+                    {
+                      "name": "last_interaction",
+                      "expression": "`last_interaction`"
+                    },
+                    {
+                      "name": "parentid",
+                      "expression": "`parentid`"
+                    },
+                    {
+                      "name": "source_file",
+                      "expression": "`source_file`"
+                    },
+                    {
+                      "name": "ingestion_time",
+                      "expression": "`ingestion_time`"
+                    },
+                    {
+                      "name": "parent_categoryid",
+                      "expression": "`parent_categoryid`"
+                    },
+                    {
+                      "name": "rank",
+                      "expression": "`rank`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "categoryid"
+                  },
+                  {
+                    "fieldName": "itemid"
+                  },
+                  {
+                    "fieldName": "event"
+                  },
+                  {
+                    "fieldName": "interaction_count"
+                  },
+                  {
+                    "fieldName": "unique_visitors"
+                  },
+                  {
+                    "fieldName": "first_interaction"
+                  },
+                  {
+                    "fieldName": "last_interaction"
+                  },
+                  {
+                    "fieldName": "parentid"
+                  },
+                  {
+                    "fieldName": "source_file"
+                  },
+                  {
+                    "fieldName": "ingestion_time"
+                  },
+                  {
+                    "fieldName": "parent_categoryid"
+                  },
+                  {
+                    "fieldName": "rank"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 0,
+            "width": 10,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "76a8a812",
+      "displayName": "Untitled page 2",
+      "layout": [
+        {
+          "widget": {
+            "name": "fbc8f3cc",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d9f83421",
+                  "fields": [
+                    {
+                      "name": "event",
+                      "expression": "`event`"
+                    },
+                    {
+                      "name": "sum(event_count)",
+                      "expression": "SUM(`event_count`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "histogram",
+              "encodings": {
+                "y": {
+                  "fieldName": "sum(event_count)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "event",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 0,
+            "width": 6,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}

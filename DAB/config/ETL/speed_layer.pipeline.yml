@@ -1,0 +1,21 @@
+resources:
+  pipelines:
+    speed_layer_pipeline:
+      name: "Lambda Architecture - Speed Layer Pipeline"
+      catalog: ${var.catalog}
+      development: true
+      continuous: true
+      channel: "CURRENT"
+      photon: true
+
+      libraries:
+        - file:
+            path: src/Streaming_pipeline/bronze_layer/ingest_event.py
+        - file:
+            path: src/Streaming_pipeline/silver_layer/tranform_event.py
+        - file:
+            path: src/Streaming_pipeline/gold_layer/aggergate_event.py
+
+      configuration:
+        kinesis_stream_name: "databrick-lambda-architecture-events"
+        kinesis_region: "us-east-1"

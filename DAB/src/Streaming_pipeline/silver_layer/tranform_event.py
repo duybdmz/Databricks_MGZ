@@ -1,13 +1,13 @@
 import dlt
 from pyspark.sql.functions import col, from_json
-from pyspark.sql.types import StructType, StructField, LongType, IntegerType, StringType
+from pyspark.sql.types import StructType, StructField, LongType, StringType
 
 events_schema = StructType([
     StructField("timestamp", LongType(), True),
-    StructField("visitorid", IntegerType(), True),
+    StructField("visitorid", StringType(), True),
     StructField("event", StringType(), True),
-    StructField("itemid", IntegerType(), True),
-    StructField("transactionid", IntegerType(), True)
+    StructField("itemid", StringType(), True),
+    StructField("transactionid", StringType(), True)
 ])
 
 
@@ -28,8 +28,17 @@ def silver_events():
         "approximateArrivalTimestamp", 
         "ingestion_time"               
     )
+
+    # Cast string fields to integer after JSON parsing
+    df_casted = df_parsed.withColumn(
+        "visitorid", col("visitorid").cast("integer")
+    ).withColumn(
+        "itemid", col("itemid").cast("integer")
+    ).withColumn(
+        "transactionid", col("transactionid").cast("integer")
+    )
     
-    df_watermarked = df_parsed.withColumn(
+    df_watermarked = df_casted.withColumn(
         "event_time", 
         (col("timestamp") / 1000).cast("timestamp")
     ).withWatermark("event_time", "10 minutes") 

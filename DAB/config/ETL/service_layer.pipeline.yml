@@ -1,0 +1,19 @@
+resources:
+  pipelines:
+    service_layer_pipeline:
+      name: "Lambda Architecture - Service Layer Pipeline"
+      catalog: ${var.catalog}
+      target: "serving"
+      development: true
+      continuous: false
+      channel: "CURRENT"
+      photon: true
+      serverless: true
+
+      libraries:
+        - file:
+            path: src/Service_ETL_Pipeline/transformations/sales_funnel_summary.py
+        - file:
+            path: src/Service_ETL_Pipeline/transformations/user_activity_aggregates.py
+        - file:
+            path: src/Service_ETL_Pipeline/transformations/trending_products_leaderboard.py

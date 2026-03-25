@@ -1,0 +1,21 @@
+
+resources:
+  pipelines:
+    batch_layer_pipeline:
+      name: "Lambda Architecture - Batch Layer Pipeline"
+      catalog: ${var.catalog}
+      development: true
+      continuous: false
+      channel: "CURRENT"
+      photon: true
+
+      libraries:
+        - file:
+            path: src/Batch_layer/Bronze_layer/ingest_items_properties.py
+        - file:
+            path: src/Batch_layer/Silver_layer/transform_properties_silver.py
+        - file:
+            path: src/Batch_layer/Gold_layer/aggregator_gold.py
+      configuration:
+        s3_bronze_item_path: "s3://data-batch-dbr/raw/item_properties/"
+        s3_bronze_category_path: "s3://data-batch-dbr/raw/category_tree/"
