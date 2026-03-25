@@ -1,0 +1,19 @@
+
+  jobs:
+    daily_etl_job:
+      name: "Lambda Architecture - Daily ETL Orchestration"
+      schedule:
+        quartz_cron_expression: "0 0 6 * * ?"
+        timezone_id: "Asia/Seoul"
+
+      tasks:
+
+        - task_key: run_batch_layer
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.batch_layer_pipeline.id}
+
+        - task_key: run_service_layer
+          depends_on:
+            - task_key: run_batch_layer
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.service_layer_pipeline.id}
