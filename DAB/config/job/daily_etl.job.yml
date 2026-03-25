@@ -1,4 +1,4 @@
-
+resources:
   jobs:
     daily_etl_job:
       name: "Lambda Architecture - Daily ETL Orchestration"
