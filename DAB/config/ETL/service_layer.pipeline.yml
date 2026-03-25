@@ -12,8 +12,8 @@ resources:
 
       libraries:
         - file:
-            path: src/Service_ETL_Pipeline/transformations/sales_funnel_summary.py
+            path: ../../src/Service_ETL_Pipeline/transformations/sales_funnel_summary.py
         - file:
-            path: src/Service_ETL_Pipeline/transformations/user_activity_aggregates.py
+            path: ../../src/Service_ETL_Pipeline/transformations/user_activity_aggregates.py
         - file:
-            path: src/Service_ETL_Pipeline/transformations/trending_products_leaderboard.py
+            path: ../../src/Service_ETL_Pipeline/transformations/trending_products_leaderboard.py
