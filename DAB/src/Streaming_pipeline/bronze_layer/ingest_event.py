@@ -18,8 +18,6 @@ STARTING_POSITION = os.environ.get("KINESIS_STARTING_POSITION")
 awsAccessKey = os.environ.get("AWS_ACCESS_KEY")
 awsSecretKey = os.environ.get("AWS_SECRET_KEY")
 
-
-
 @dlt.table(
     name="retail_rocket.bronze.ingest_events",
     comment="đây là phần ingest từ kinesis",
