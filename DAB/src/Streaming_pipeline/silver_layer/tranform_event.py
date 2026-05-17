@@ -1,5 +1,5 @@
 import dlt
-from pyspark.sql.functions import col, from_json
+from pyspark.sql.functions import col, from_json, from_utc_timestamp
 from pyspark.sql.types import StructType, StructField, LongType, StringType
 
 events_schema = StructType([
@@ -40,8 +40,14 @@ def silver_events():
     
     df_watermarked = df_casted.withColumn(
         "event_time", 
-        (col("timestamp") / 1000).cast("timestamp")
-    ).withWatermark("event_time", "10 minutes") 
+        from_utc_timestamp((col("timestamp") / 1000).cast("timestamp"), "Asia/Ho_Chi_Minh")
+    ).withColumn(
+        "approximateArrivalTimestamp",
+        from_utc_timestamp(col("approximateArrivalTimestamp"), "Asia/Ho_Chi_Minh")
+    ).withColumn(
+        "ingestion_time",
+        from_utc_timestamp(col("ingestion_time"), "Asia/Ho_Chi_Minh")
+    ).withWatermark("event_time", "1 minutes") 
     
 
     df_deduplicated = df_watermarked.dropDuplicatesWithinWatermark(

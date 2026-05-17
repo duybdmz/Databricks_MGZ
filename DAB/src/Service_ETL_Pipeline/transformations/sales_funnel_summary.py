@@ -1,41 +1,44 @@
 from pyspark import pipelines as dp
 from pyspark.sql import functions as F
 
-@dp.materialized_view(
-    comment="E-commerce conversion funnel summary: view → addtocart → transaction with drop-off rates",
-    cluster_by=["funnel_stage"],
+@dp.table(
+    comment="Real-time e-commerce conversion funnel: view → addtocart → transaction per 1-minute window",
+    cluster_by=["window_start"],  # Tối ưu storage: sắp xếp dữ liệu theo thời gian window
 )
-def sales_funnel_summary():
-    events = spark.read.table("retail_rocket.silver.transform_events")
-    funnel = (
-        events.groupBy("event")
-        .agg(
-            F.count("*").alias("event_count"),
-            F.countDistinct("visitorid").alias("unique_visitors"),
-            F.countDistinct("itemid").alias("unique_items"),
+def sales_funnel_summary_rt():
+    return (
+        spark.readStream
+        .option("skipChangeCommits", "true")  
+        .table("retail_rocket.silver.transform_events")  
+        .withWatermark("event_time", "1 minute")  
+        .groupBy(
+            F.window("event_time", "1 minute"), 
+            "event"  
         )
-        .withColumn(
-            "funnel_stage",
+
+        .agg(
+            F.count("*").alias("event_count"),  
+            F.approx_count_distinct("visitorid").alias("unique_visitors"),  
+            F.approx_count_distinct("itemid").alias("unique_items"),  
+            # Số item khác nhau
+        )
+
+        .select(
+            F.col("window.start").alias("window_start"),  
+            F.col("window.end").alias("window_end"),  
+
+            "event",
+            "event_count",
+            "unique_visitors",
+            "unique_items",
+
             F.when(F.col("event") == "view", 1)
             .when(F.col("event") == "addtocart", 2)
-            .when(F.col("event") == "transaction", 3),
-        )
-        .withColumn(
-            "stage_label",
+            .when(F.col("event") == "transaction", 3)
+            .alias("funnel_stage"),  
             F.when(F.col("event") == "view", "1. View")
             .when(F.col("event") == "addtocart", "2. Add to Cart")
-            .when(F.col("event") == "transaction", "3. Transaction"),
+            .when(F.col("event") == "transaction", "3. Transaction")
+            .alias("stage_label"),  
         )
     )
-
-    total_views = events.filter(F.col("event") == "view").count()
-
-    funnel_with_rates = funnel.withColumn(
-        "conversion_rate_from_view",
-        F.when(
-            F.lit(total_views) > 0,
-            F.round(F.col("event_count") / F.lit(total_views) * 100, 2),
-        ).otherwise(0),
-    )
-
-    return funnel_with_rates.orderBy("funnel_stage")

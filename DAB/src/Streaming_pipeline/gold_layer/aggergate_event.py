@@ -10,9 +10,9 @@ def speed_view_item_performance():
     events_stream = spark.readStream.table("retail_rocket.silver.transform_events")
     return (
         events_stream
-        .withWatermark("event_time", "15 minutes") 
+        .withWatermark("event_time", "2 minutes") 
         .groupBy(
-            window(col("event_time"), "5 minutes"), 
+            window(col("event_time"), "1 minutes"), 
             col("itemid")
         )
         .agg(

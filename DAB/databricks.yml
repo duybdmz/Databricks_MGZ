@@ -1,4 +1,3 @@
-
 bundle:
   name: DAB
   uuid: 1c21305c-b2a5-42d9-8637-d2d30c703e5a
@@ -10,25 +9,11 @@ include:
 variables:
   catalog:
     description: The catalog to use
-
+    default: retail_rocket
 
 targets:
-
   dev:
     mode: development
-    default: true                    
+    default: true
     workspace:
       host: https://dbc-e58a0f49-fb51.cloud.databricks.com
-    variables:
-      catalog: dev_retail_rocket        
-
-  prod:
-    mode: production
-    workspace:
-      host: https://dbc-030e01b6-b7d2.cloud.databricks.com/
-      root_path: /Workspace/Users/duybd@mz.co.kr/.bundle/${bundle.name}/${bundle.target}
-    variables:
-      catalog: pro_retail_rocket         
-    permissions:
-      - user_name: duybd@mz.co.kr
-        level: CAN_MANAGE

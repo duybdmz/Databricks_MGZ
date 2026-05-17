@@ -1,7 +1,7 @@
 resources:
   pipelines:
     batch_layer_pipeline:
-      name: "Lambda Architecture - Batch Layer Pipeline"
+      name: "Batch Layer Pipeline"
       catalog: ${var.catalog}
       target: "default"
       development: true

@@ -1,7 +1,7 @@
 resources:
   pipelines:
     speed_layer_pipeline:
-      name: "Lambda Architecture - Speed Layer Pipeline"
+      name: "Speed Layer Pipeline"
       catalog: ${var.catalog}
       target: "default"
       development: true

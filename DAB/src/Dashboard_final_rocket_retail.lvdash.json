@@ -1,38 +1,62 @@
 {
   "datasets": [
     {
-      "name": "ec51d10c",
-      "displayName": "Top Trending Retail Products Leaderboard Snapshot",
-      "queryLines": [
-        "select * from retail_rocket.serving.trending_products_leaderboard \r\n",
-        "\r\n"
-      ],
-      "catalog": "retail_rocket",
-      "schema": "serving"
-    },
-    {
       "name": "d9f83421",
-      "displayName": "Untitled Dataset Generated from SQL Query",
+      "displayName": "User Activity Aggregates",
       "queryLines": [
-        "select * from retail_rocket.serving.user_activity_aggregates"
+        "SELECT\n",
+        "  *\n",
+        "FROM\n",
+        "  retail_rocket.serving.user_activity_aggregates\n",
+        "WHERE\n",
+        "  window_start >= current_date() - INTERVAL 1 DAY"
+      ],
+      "columns": [
+        {
+          "displayName": "window_start_vn",
+          "description": "window_start converted to Vietnam timezone (UTC+7)",
+          "expression": "DATEADD(HOUR, 7, `window_start`)"
+        },
+        {
+          "displayName": "window_end_vn",
+          "description": "window_end converted to Vietnam timezone (UTC+7)",
+          "expression": "DATEADD(HOUR, 7, `window_end`)"
+        }
       ]
     },
     {
       "name": "d4d628ed",
       "displayName": "retail rocket sales funnel analytics summary",
       "queryLines": [
-        "select * from retail_rocket.serving.sales_funnel_summary"
+        "select * from retail_rocket.serving.sales_funnel_summary_rtretail_rocket"
       ]
     }
   ],
   "pages": [
     {
       "name": "8a0fafbf",
-      "displayName": "Untitled page",
+      "displayName": "Tổng quan Chuyển đổi",
       "layout": [
         {
           "widget": {
-            "name": "25a9f955",
+            "name": "header",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## 🚀 Retail Rocket — Phân tích Chuyển đổi\n",
+                "Tổng quan hành vi người dùng: View → Add to Cart → Transaction"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_views",
             "queries": [
               {
                 "name": "main_query",
@@ -40,12 +64,226 @@
                   "datasetName": "d4d628ed",
                   "fields": [
                     {
-                      "name": "sum(unique_items)",
-                      "expression": "SUM(`unique_items`)"
+                      "name": "sum(unique_visitors)",
+                      "expression": "SUM(`unique_visitors`)"
                     },
                     {
-                      "name": "event",
-                      "expression": "`event`"
+                      "name": "sum(event_count)",
+                      "expression": "SUM(`event_count`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`event` IN ('view')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Lượt Xem",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(event_count)",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 0
+                    },
+                    "abbreviation": "compact"
+                  },
+                  "displayName": "Lượt Xem"
+                },
+                "target": {
+                  "fieldName": "sum(unique_visitors)",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 0
+                    },
+                    "abbreviation": "compact"
+                  },
+                  "change": {
+                    "type": "numeric"
+                  },
+                  "displayName": "Unique Visitors"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_cart",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d4d628ed",
+                  "fields": [
+                    {
+                      "name": "avg(conversion_rate_from_view)",
+                      "expression": "AVG(`conversion_rate_from_view`)"
+                    },
+                    {
+                      "name": "sum(event_count)",
+                      "expression": "SUM(`event_count`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`event` IN ('addtocart')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Thêm vào Giỏ",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(event_count)",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 0
+                    },
+                    "abbreviation": "compact"
+                  },
+                  "displayName": "Thêm vào Giỏ"
+                },
+                "target": {
+                  "fieldName": "avg(conversion_rate_from_view)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 2
+                    }
+                  },
+                  "change": {
+                    "type": "numeric"
+                  },
+                  "displayName": "Tỉ lệ từ View"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 2,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "counter_tx",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d4d628ed",
+                  "fields": [
+                    {
+                      "name": "avg(conversion_rate_from_view)",
+                      "expression": "AVG(`conversion_rate_from_view`)"
+                    },
+                    {
+                      "name": "sum(event_count)",
+                      "expression": "SUM(`event_count`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`event` IN ('transaction')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Giao dịch",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(event_count)",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 0
+                    },
+                    "abbreviation": "compact"
+                  },
+                  "displayName": "Giao dịch"
+                },
+                "target": {
+                  "fieldName": "avg(conversion_rate_from_view)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 2
+                    }
+                  },
+                  "change": {
+                    "type": "numeric"
+                  },
+                  "displayName": "Tỉ lệ từ View"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 2,
+            "width": 4,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "funnel",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d4d628ed",
+                  "fields": [
+                    {
+                      "name": "stage_label",
+                      "expression": "`stage_label`"
+                    },
+                    {
+                      "name": "sum(unique_visitors)",
+                      "expression": "SUM(`unique_visitors`)"
                     }
                   ],
                   "disaggregated": false
@@ -55,31 +293,126 @@
             "spec": {
               "version": 3,
               "frame": {
-                "title": "E-commerce Conversion Funnel",
+                "title": "Phễu Chuyển đổi",
                 "showTitle": true
               },
-              "widgetType": "pie",
+              "widgetType": "funnel",
               "encodings": {
-                "angle": {
-                  "fieldName": "sum(unique_items)",
+                "x": {
+                  "fieldName": "sum(unique_visitors)",
                   "scale": {
                     "type": "quantitative"
-                  }
+                  },
+                  "displayName": "Số lượng"
                 },
-                "color": {
-                  "fieldName": "event",
+                "y": {
+                  "fieldName": "stage_label",
+                  "displayName": "Giai đoạn",
                   "scale": {
                     "type": "categorical"
                   }
+                },
+                "color": {
+                  "fieldName": "stage_label",
+                  "displayName": "Giai đoạn",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
                 }
               }
             }
           },
           "position": {
             "x": 0,
-            "y": 0,
-            "width": 12,
-            "height": 10
+            "y": 6,
+            "width": 7,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "conversion_bar",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d4d628ed",
+                  "fields": [
+                    {
+                      "name": "stage_label",
+                      "expression": "`stage_label`"
+                    },
+                    {
+                      "name": "avg(conversion_rate_from_view)",
+                      "expression": "AVG(`conversion_rate_from_view`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Tỉ lệ Chuyển đổi từ View (%)",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "stage_label",
+                  "displayName": "Giai đoạn",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "custom-order",
+                      "orderedValues": [
+                        "1. View",
+                        "2. Add to Cart",
+                        "3. Transaction"
+                      ]
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "avg(conversion_rate_from_view)",
+                  "format": {
+                    "type": "number-plain",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 2
+                    },
+                    "abbreviation": "none"
+                  },
+                  "displayName": "Tỉ lệ (%)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "stage_label",
+                  "legend": {
+                    "hide": true
+                  },
+                  "displayName": "Giai đoạn",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 7,
+            "y": 6,
+            "width": 5,
+            "height": 8
           }
         }
       ],
@@ -89,138 +422,143 @@
     {
       "name": "0796af45",
       "displayName": "Global Filters",
-      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
-      "layoutVersion": "GRID_V1"
-    },
-    {
-      "name": "b8de0574",
-      "displayName": "Untitled page 1",
       "layout": [
         {
           "widget": {
-            "name": "a48a78dd",
+            "name": "e81dc34e",
             "queries": [
               {
-                "name": "main_query",
+                "name": "dashboards/01f1284c646c16eabc593b70e934e020/datasets/01f128b97f6c1a7da52afb84bc5cd004_event",
                 "query": {
-                  "datasetName": "ec51d10c",
+                  "datasetName": "d9f83421",
                   "fields": [
-                    {
-                      "name": "categoryid",
-                      "expression": "`categoryid`"
-                    },
-                    {
-                      "name": "itemid",
-                      "expression": "`itemid`"
-                    },
                     {
                       "name": "event",
                       "expression": "`event`"
                     },
                     {
-                      "name": "interaction_count",
-                      "expression": "`interaction_count`"
-                    },
-                    {
-                      "name": "unique_visitors",
-                      "expression": "`unique_visitors`"
-                    },
-                    {
-                      "name": "first_interaction",
-                      "expression": "`first_interaction`"
-                    },
-                    {
-                      "name": "last_interaction",
-                      "expression": "`last_interaction`"
-                    },
-                    {
-                      "name": "parentid",
-                      "expression": "`parentid`"
-                    },
-                    {
-                      "name": "source_file",
-                      "expression": "`source_file`"
-                    },
-                    {
-                      "name": "ingestion_time",
-                      "expression": "`ingestion_time`"
-                    },
-                    {
-                      "name": "parent_categoryid",
-                      "expression": "`parent_categoryid`"
-                    },
-                    {
-                      "name": "rank",
-                      "expression": "`rank`"
+                      "name": "event_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
                     }
                   ],
-                  "disaggregated": true
+                  "disaggregated": false
+                }
+              },
+              {
+                "name": "dashboards/01f1284c646c16eabc593b70e934e020/datasets/01f128b97f6c1aab92c2b9b47a1f6873_event",
+                "query": {
+                  "datasetName": "d4d628ed",
+                  "fields": [
+                    {
+                      "name": "event",
+                      "expression": "`event`"
+                    },
+                    {
+                      "name": "event_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
                 }
               }
             ],
             "spec": {
               "version": 2,
-              "widgetType": "table",
+              "frame": {
+                "title": "Lọc Event (Global)",
+                "showTitle": true
+              },
+              "widgetType": "filter-multi-select",
               "encodings": {
-                "columns": [
+                "fields": [
                   {
-                    "fieldName": "categoryid"
+                    "fieldName": "event",
+                    "queryName": "dashboards/01f1284c646c16eabc593b70e934e020/datasets/01f128b97f6c1a7da52afb84bc5cd004_event"
                   },
                   {
-                    "fieldName": "itemid"
-                  },
-                  {
-                    "fieldName": "event"
-                  },
-                  {
-                    "fieldName": "interaction_count"
-                  },
-                  {
-                    "fieldName": "unique_visitors"
-                  },
-                  {
-                    "fieldName": "first_interaction"
-                  },
-                  {
-                    "fieldName": "last_interaction"
-                  },
-                  {
-                    "fieldName": "parentid"
-                  },
-                  {
-                    "fieldName": "source_file"
-                  },
-                  {
-                    "fieldName": "ingestion_time"
-                  },
-                  {
-                    "fieldName": "parent_categoryid"
-                  },
-                  {
-                    "fieldName": "rank"
+                    "fieldName": "event",
+                    "queryName": "dashboards/01f1284c646c16eabc593b70e934e020/datasets/01f128b97f6c1aab92c2b9b47a1f6873_event"
                   }
                 ]
               }
             }
           },
           "position": {
-            "x": 2,
+            "x": 0,
             "y": 0,
-            "width": 10,
-            "height": 6
+            "width": 1,
+            "height": 2
           }
         }
       ],
-      "pageType": "PAGE_TYPE_CANVAS",
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
       "layoutVersion": "GRID_V1"
     },
     {
       "name": "76a8a812",
-      "displayName": "Untitled page 2",
+      "displayName": "Giám sát Thời gian thực",
       "layout": [
         {
           "widget": {
-            "name": "fbc8f3cc",
+            "name": "event_filter",
+            "queries": [
+              {
+                "name": "dashboards/01f1284c646c16eabc593b70e934e020/datasets/01f128b97f6c1a7da52afb84bc5cd004_event",
+                "query": {
+                  "datasetName": "d9f83421",
+                  "fields": [
+                    {
+                      "name": "event",
+                      "expression": "`event`"
+                    },
+                    {
+                      "name": "event_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Lọc Event",
+                "showTitle": true
+              },
+              "selection": {
+                "defaultSelection": {
+                  "values": {
+                    "dataType": "STRING",
+                    "values": [
+                      {
+                        "value": "transaction"
+                      }
+                    ]
+                  }
+                }
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "event",
+                    "queryName": "dashboards/01f1284c646c16eabc593b70e934e020/datasets/01f128b97f6c1a7da52afb84bc5cd004_event"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "visitors_line",
             "queries": [
               {
                 "name": "main_query",
@@ -232,8 +570,12 @@
                       "expression": "`event`"
                     },
                     {
-                      "name": "sum(event_count)",
-                      "expression": "SUM(`event_count`)"
+                      "name": "window_start_vn",
+                      "expression": "`window_start_vn`"
+                    },
+                    {
+                      "name": "sum(unique_visitors)",
+                      "expression": "SUM(`unique_visitors`)"
                     }
                   ],
                   "disaggregated": false
@@ -242,16 +584,35 @@
             ],
             "spec": {
               "version": 3,
-              "widgetType": "histogram",
+              "frame": {
+                "title": "Unique Visitors theo thời gian",
+                "showTitle": true
+              },
+              "widgetType": "line",
               "encodings": {
+                "x": {
+                  "fieldName": "window_start_vn",
+                  "axis": {
+                    "hideTitle": true
+                  },
+                  "displayName": "Thời gian (VN)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
                 "y": {
-                  "fieldName": "sum(event_count)",
+                  "fieldName": "sum(unique_visitors)",
+                  "displayName": "Unique Visitors",
                   "scale": {
                     "type": "quantitative"
                   }
                 },
                 "color": {
                   "fieldName": "event",
+                  "legend": {
+                    "position": "top"
+                  },
+                  "displayName": "Event",
                   "scale": {
                     "type": "categorical"
                   }
@@ -260,10 +621,10 @@
             }
           },
           "position": {
-            "x": 2,
-            "y": 0,
-            "width": 6,
-            "height": 6
+            "x": 0,
+            "y": 2,
+            "width": 12,
+            "height": 8
           }
         }
       ],
@@ -273,7 +634,38 @@
   ],
   "uiSettings": {
     "theme": {
-      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+      "canvasBackgroundColor": {
+        "light": "#F0F2F5",
+        "dark": "#1A1D21"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#23272E"
+      },
+      "widgetBorderColor": {
+        "light": "#E2E5EA",
+        "dark": "#33383F"
+      },
+      "fontColor": {
+        "light": "#1B2436",
+        "dark": "#E8EAED"
+      },
+      "selectionColor": {
+        "light": "#4F46E5",
+        "dark": "#818CF8"
+      },
+      "visualizationColors": [
+        "#4F46E5",
+        "#10B981",
+        "#F59E0B",
+        "#EF4444",
+        "#8B5CF6",
+        "#06B6D4",
+        "#EC4899",
+        "#14B8A6"
+      ],
+      "widgetHeaderAlignment": "LEFT",
+      "fontFamily": "Trebuchet MS"
     },
     "applyModeEnabled": false
   }

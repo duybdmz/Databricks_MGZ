@@ -32,7 +32,7 @@ def ingest_data_properties():
         .option("header", "true")
         .schema(item_schema)
         .load(bronze_path_item)
-        .selectExpr("*", "_metadata.file_name as source_file", "current_timestamp() as ingestion_time")
+        .selectExpr("*", "_metadata.file_name as source_file", "_metadata.file_modification_time as ingestion_time")
     )
     
 @dlt.table(
